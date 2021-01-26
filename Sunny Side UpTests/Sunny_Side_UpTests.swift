@@ -9,26 +9,44 @@
 import XCTest
 @testable import Sunny_Side_Up
 
-class Sunny_Side_UpTests: XCTestCase {
-
-    override func setUpWithError() throws {
-        // Put setup code here. This method is called before the invocation of each test method in the class.
+class CurrentWeatherControllerTests: XCTestCase {
+    
+    
+    let currentWeather = CurrentWeatherViewController()
+    
+    func testDateFormatter() {
+        let date1 = Date(timeIntervalSinceReferenceDate: -123456789.0)
+        let result1 = currentWeather.formatDate(date: date1)
+        XCTAssert(result1 == "Sat, 2/1")
+        let date2 = Date(timeIntervalSinceReferenceDate: 978307199)
+        let result2 = currentWeather.formatDate(date: date2)
+        XCTAssert(result2 == "Thu, 1/1")
     }
+}
 
-    override func tearDownWithError() throws {
-        // Put teardown code here. This method is called after the invocation of each test method in the class.
-    }
-
-    func testExample() throws {
-        // This is an example of a functional test case.
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
-    }
-
-    func testPerformanceExample() throws {
-        // This is an example of a performance test case.
-        self.measure {
-            // Put the code you want to measure the time of here.
+class GetWeatherTests: XCTestCase {
+    
+    let weatherGetter = GetWeather()
+    
+    func testGetWeather() {
+        weatherGetter.getWeather(lat: 300.0, lon: 300.0) {
+            result in
+            XCTAssert(result.main == nil)
+        }
+        
+        weatherGetter.getWeather(lat: 90.0, lon: 90.0) {
+            result in
+            XCTAssert(result.main != nil)
+        }
+        
+        weatherGetter.getForecast(city: "abcdefg") {
+            result in
+            XCTAssert(result.list?[0].dt == nil)
+        }
+        
+        weatherGetter.getForecast(city: "Detroit") {
+            result in
+            XCTAssert(result.list?[0].dt != nil)
         }
     }
-
 }
